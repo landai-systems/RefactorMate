@@ -1,12 +1,6 @@
-import os
 import openai
 from typing import Optional
-from dotenv import load_dotenv
-from pathlib import Path
-
-env_path = Path('../.env')
-load_dotenv(dotenv_path=env_path)
-openai.api_key = os.getenv("OPENAI_API_KEY")
+import os
 
 PROMPT_TEMPLATE = """
 You are an expert code reviewer. The user will provide the filename and full content of a source code file.
@@ -18,7 +12,8 @@ Filename: {filename}
 
 Content:
 {content}
-"""
+""" 
+
 
 def get_code_diff_suggestion(filename: str, content: str, model: str) -> Optional[str]:
     """
@@ -33,6 +28,7 @@ def get_code_diff_suggestion(filename: str, content: str, model: str) -> Optiona
         Optional[str]: Suggested diff or None.
     """
     try:
+        openai.api_key = os.getenv("OPENAI_API_KEY")
         response = openai.ChatCompletion.create(
             model=model,
             messages=[
@@ -44,5 +40,5 @@ def get_code_diff_suggestion(filename: str, content: str, model: str) -> Optiona
         )
         return response.choices[0].message["content"].strip()
     except Exception as e:
-        print(f"\033[91mOpenAI request failed: {str(e)}\033[0m")
+        # Fehler wird im aufrufenden Modul geloggt
         return None

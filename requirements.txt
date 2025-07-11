@@ -11,6 +11,7 @@ argparse; python_version<"3.10"  # Only needed for older Python versions
 
 # Testing (optional but recommended)
 pytest>=7.4.0           # Unit testing framework
+pytest-mock>=3.10.0       # Useful for mocking during tests
 
 # Typing and linting (optional dev tools)
 mypy>=1.4.0             # Optional: static type checker

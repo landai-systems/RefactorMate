@@ -1,0 +1,1 @@
+# conftest.py — enables test discovery and fixtures (if needed in the future)

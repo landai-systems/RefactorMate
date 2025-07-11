@@ -1,18 +1,26 @@
 import openai
 from typing import Optional
 import os
+import logging
+
 
 PROMPT_TEMPLATE = """
-You are an expert code reviewer. The user will provide the filename and full content of a source code file.
+You are an expert Python software architect.
 
-You will respond with a unified diff (like from `diff -u`) showing improvements and cleanups to the code.
-Only return the diff.
+Your task is to refactor the provided code to improve:
+- readability
+- modularity (split into functions if needed)
+- performance
+- naming conventions (PEP8)
+- remove dead code or bad patterns
+
+Return only the unified diff (diff -u style).
 
 Filename: {filename}
 
 Content:
 {content}
-""" 
+"""
 
 
 def get_code_diff_suggestion(filename: str, content: str, model: str) -> Optional[str]:
@@ -29,7 +37,7 @@ def get_code_diff_suggestion(filename: str, content: str, model: str) -> Optiona
     """
     try:
         openai.api_key = os.getenv("OPENAI_API_KEY")
-        response = openai.ChatCompletion.create(
+        response = openai.chat.completions.create(
             model=model,
             messages=[
                 {"role": "system", "content": "You are a helpful code improvement assistant."},
@@ -38,7 +46,8 @@ def get_code_diff_suggestion(filename: str, content: str, model: str) -> Optiona
             temperature=0.3,
             max_tokens=1024
         )
-        return response.choices[0].message["content"].strip()
+        return response.choices[0].message.content
     except Exception as e:
         # Fehler wird im aufrufenden Modul geloggt
+        logging.error(f"OpenAI API call failed: {e}")
         return None
